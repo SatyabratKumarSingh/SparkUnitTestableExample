@@ -1,5 +1,16 @@
 package com.sparkunittestableexample.main
+import org.apache.spark.sql.{DataFrame}
+import org.apache.spark.sql.functions.count
 
-class WordCountJob {
+object WordCountJob extends SparkExampleSession {
+  def calculateWordCount(dsSentence: DataFrame): DataFrame = {
+      import spark.implicits._
+      dsSentence.as[String].flatMap(_.split(' ')).map(_.replace(",", "")).map(_.replace(".", "")).
+        filter(!_.isEmpty).toDF().groupBy("value")
+        .agg(count("*") as "word-count")
 
+  }
 }
+
+
+
